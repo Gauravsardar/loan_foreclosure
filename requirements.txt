@@ -3,4 +3,7 @@ pdfplumber
 sentence-transformers
 faiss-cpu
 numpy
-phidata 
+phidata
+lancedb
+python-dotenv
+google-generativeai

@@ -1,17 +1,19 @@
 import streamlit as st
 import os
+from dotenv import load_dotenv
 from phi.agent import Agent
-from phi.model.openai import OpenAIChat
+from phi.model.google import Gemini
 from phi.knowledge.pdf import PDFKnowledgeBase
 from phi.embedder.openai import OpenAIEmbedder
 from phi.vectordb.lancedb import LanceDb, SearchType
 
-# Path to the PDF
+load_dotenv()  
+
 PDF_PATH = os.path.join('public', 'Employee Handbook.pdf')
 
 # Create a knowledge base from a PDF
 knowledge_base = PDFKnowledgeBase(
-    paths=["public/Employee Handbook.pdf"],
+    paths=[PDF_PATH],
     vector_db=LanceDb(
         table_name="employee_handbook",
         uri="tmp/lancedb",
@@ -23,13 +25,13 @@ knowledge_base = PDFKnowledgeBase(
 knowledge_base.load()
 
 agent = Agent(
-    model=OpenAIChat(id="gpt-4o"),
+    model=Gemini(id = "gemini-2.0-flash"),
     knowledge=knowledge_base,
     show_tool_calls=True,
     markdown=True,
 )
 
-st.title('Policy Retrieval Agent (RAG Demo, phidata)')
+st.title('Policy Retrieval Agent (RAG Demo, phidata, Gemini)')
 st.write('Ask a question about the Employee Handbook:')
 
 with st.spinner('Loading and indexing policy document...'):
@@ -44,4 +46,4 @@ if query:
         for doc in results:
             st.write(doc.page_content)
 
-st.caption('Powered by Streamlit and phidata RAG agent.') 
+st.caption('Powered by Streamlit, phidata, LanceDB, and Gemini.') 
